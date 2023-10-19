@@ -1,0 +1,310 @@
+//Contador de 0 a 99
+#define A 10
+#define B 11
+#define C 5
+#define D 6
+#define E 7
+#define F 9
+#define G 8
+#define botonSubir 3
+#define botonBajar 2
+#define botonReset 4
+#define UNIDAD A4
+#define DECENA A5
+
+int tiempo = 10;
+int contador = 0;
+int subePrevia = 1;
+int bajaPrevia = 1;
+int resetPrevia = 1;
+
+void setup()
+{
+  // Configura los pines de botones como entrada
+  pinMode(botonSubir, INPUT_PULLUP);
+  pinMode(botonBajar, INPUT_PULLUP);
+  pinMode(botonReset, INPUT_PULLUP);
+  
+  // Configura los pines de los displays como salida
+  for(int i = 0; i <= 12 ; i++)
+  {
+    pinMode(i, OUTPUT);
+  }
+  
+  // Inicializa los displays apagados
+  pinMode(UNIDAD, OUTPUT);
+  pinMode(DECENA, OUTPUT);
+  digitalWrite(UNIDAD, LOW);
+  digitalWrite(DECENA, LOW);
+  
+  // Muestra el dígito 0 en el inicio
+  MostrarDigito(0);
+}
+
+void loop()
+{
+  // Lee el botón presionado
+  int presionado = botonPresionado();
+  
+  // Actualiza el contador según el botón presionado
+  if (presionado == botonSubir) 
+  {
+    contador++;
+    if (contador > 99)
+    {
+      contador = 0;
+    } 
+  }
+  else if(presionado == botonBajar)
+  {
+    contador--;
+    if (contador < 0)
+    {
+      contador = 99;
+    }
+  }
+  else if(presionado == botonReset)
+  {
+    contador = 0;
+  }
+  // Muestra el contador en los displays
+  MostrarContador(contador);
+}
+
+void ApagarDisplay() // Apaga todos los leds de los displays
+{
+  apagarLeds(A);
+  apagarLeds(B);
+  apagarLeds(C);
+  apagarLeds(D);
+  apagarLeds(E);
+  apagarLeds(F);
+  apagarLeds(G);
+}
+
+void MostrarDigito(int digito)
+{
+  // Apaga los displays y muestra el dígito especificado
+  ApagarDisplay();
+  switch(digito)
+  {
+    case 0:
+      numeroCero();
+      break;
+    case 1:
+      numeroUno();
+      break;
+    case 2:
+      numeroDos();
+      break;
+    case 3:
+      numeroTres();
+      break;
+    case 4:
+      numeroCuatro();
+      break;
+    case 5:
+      numeroCinco();
+      break;
+    case 6:
+      numeroSeis();
+      break;
+    case 7:
+      numeroSiete();
+      break;
+    case 8:
+      numeroOcho();
+      break;
+    case 9:
+      numeroNueve();
+      break;
+  }
+}
+
+void prenderDigito(int digito)
+{
+  // Enciende el display adecuado y apaga el otro
+  if (digito == UNIDAD)
+  {
+    digitalWrite(UNIDAD, LOW);
+    digitalWrite(DECENA, HIGH);
+  }
+  else if (digito == DECENA)
+  {
+    digitalWrite(UNIDAD, HIGH);
+    digitalWrite(DECENA, LOW);
+  }
+  else
+  {
+    digitalWrite(UNIDAD, HIGH);
+    digitalWrite(DECENA, HIGH);
+  }
+}
+
+void MostrarContador(int contador)
+{
+  // Muestra las unidades y las decenas del contador en los displays
+  ApagarDisplay();
+  prenderDigito(UNIDAD);
+  MostrarDigito(contador % 10);
+  delay(5);
+  ApagarDisplay();
+  prenderDigito(DECENA);
+  MostrarDigito(contador / 10);
+  delay(tiempo);
+}
+
+int botonPresionado(void)
+{
+  // Lee el estado de los botones y retorna el botón presionado
+  int lecturaSube = digitalRead(botonSubir);
+  int lecturaBaja = digitalRead(botonBajar);
+  int lecturaReset = digitalRead(botonReset);
+  
+  if(lecturaSube == 1)
+  {
+    subePrevia = 1;
+  }
+
+  if(lecturaBaja == 1)
+  {
+    bajaPrevia = 1;
+  }
+
+  if(lecturaReset == 1)
+  {
+    resetPrevia = 1;
+  }
+  
+  if(lecturaSube == 0 && lecturaSube != subePrevia)
+  {
+    subePrevia = lecturaSube;
+    return botonSubir;
+  }
+
+  if(lecturaBaja == 0 && lecturaBaja != bajaPrevia)
+  {
+    bajaPrevia = lecturaBaja;
+    return botonBajar;
+  }
+
+  if(lecturaReset == 0 && lecturaReset != resetPrevia)
+  {
+    resetPrevia = lecturaReset;
+    return botonReset;
+  }
+ return 0;
+}
+
+void encenderLeds(int pin)
+{
+  // Enciende un led conectado al pin correspondiente
+  digitalWrite(pin, HIGH);
+}
+
+void apagarLeds(int pin)
+{
+  // Apaga un led conectado al pin correspondiente
+  digitalWrite(pin, LOW);
+}
+
+void numeroCero(void){
+  apagarLeds(G);
+  encenderLeds(A);
+  encenderLeds(B);
+  encenderLeds(C);
+  encenderLeds(D);
+  encenderLeds(E);
+  encenderLeds(F);
+}
+
+// Funciones para mostrar números en los displays
+void numeroUno(void){
+  apagarLeds(A);
+  apagarLeds(D);
+  apagarLeds(E);
+  apagarLeds(F);
+  apagarLeds(G);
+  encenderLeds(B);
+  encenderLeds(C);
+}
+
+void numeroDos(void){
+  apagarLeds(C);
+  apagarLeds(F);
+  encenderLeds(A);
+  encenderLeds(B);
+  encenderLeds(D);
+  encenderLeds(E);
+  encenderLeds(G); 	
+}
+
+void numeroTres(void){
+  apagarLeds(E);
+  apagarLeds(F);	
+  encenderLeds(A);
+  encenderLeds(B);
+  encenderLeds(C);
+  encenderLeds(D);
+  encenderLeds(G);
+}
+
+void numeroCuatro(void){
+  apagarLeds(A);
+  apagarLeds(D);
+  apagarLeds(E);
+  encenderLeds(B);
+  encenderLeds(C);
+  encenderLeds(F);
+  encenderLeds(G);
+}
+
+void numeroCinco(void) {
+  apagarLeds(B);
+  apagarLeds(E);
+  encenderLeds(A);
+  encenderLeds(C);
+  encenderLeds(D);
+  encenderLeds(F);
+  encenderLeds(G);
+}
+
+void numeroSeis(void) {
+  apagarLeds(B);
+  encenderLeds(A);
+  encenderLeds(C);
+  encenderLeds(D);
+  encenderLeds(E);
+  encenderLeds(F);
+  encenderLeds(G);
+}
+
+void numeroSiete(void){
+  apagarLeds(D);
+  apagarLeds(E);
+  apagarLeds(F);
+  apagarLeds(G);
+  encenderLeds(A);
+  encenderLeds(B);
+  encenderLeds(C);
+}
+
+void numeroOcho(void){
+  encenderLeds(A);
+  encenderLeds(B);
+  encenderLeds(C);
+  encenderLeds(D);
+  encenderLeds(E);
+  encenderLeds(F);
+  encenderLeds(G);
+}
+
+void numeroNueve(void) {
+  apagarLeds(E);
+  encenderLeds(A);
+  encenderLeds(B);
+  encenderLeds(C);
+  encenderLeds(D);
+  encenderLeds(F);
+  encenderLeds(G);
+}
